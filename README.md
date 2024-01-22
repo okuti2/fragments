@@ -8,8 +8,11 @@ use git status to check the status of file changes
   npm run lint
 
 - run curl
+
   curl.exe http://localhost:8080
+
   curl.exe -s localhost:8080 | jq
+  
   To check the dev tools curl.exe -i localhost:8080
 
 - start the server

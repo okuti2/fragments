@@ -22,3 +22,12 @@ use git status to check the status of file changes
 - run debug
   npm run debug or F5
   then curl.exe -s localhost:8080 to see the breakpoint get hit
+
+- Commands with curl to remember 
+  To log in using the id_token on the terminal
+  curl -H : used to include extra HTTP headers in request 
+  curl.exe -H "Authorization: Bearer {token_id here}" http:localhost:8080/v1/fragments 
+  curl -i : includes http response header in the output
+  curl -X : specifies custom request for POST, PUT or DELETE
+  curl -u : passing user credentials in the format username:password
+  curl -d : used to send data in a POST request curl -X POST -H "Content-Type: application/json" -d '{"key":"value"}' http://localhost:8080

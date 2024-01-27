@@ -6,15 +6,16 @@ const helmet = require('helmet');
 const compression = require('compression');
 const passport = require('passport');
 
-if (process.env.LOG_LEVEL === 'debug') {
-  logger.debug(process.env);
-}
+
 
 // author and version from our package.json file
 // TODO: make sure you have updated your name in the `author` section
 //const { author, version } = require('../package.json');
 
 const logger = require('./logger');
+if (process.env.LOG_LEVEL === 'debug') {
+  logger.debug(process.env);
+}
 const pino = require('pino-http')({
   // Use our default logger instance, which is already configured
   logger,

@@ -16,7 +16,7 @@ use git status to check the status of file changes
   To check the dev tools curl.exe -i localhost:8080
 
 - start the server
-  node src/server.js
+  node src/index.js
 
 - start
   npm run start

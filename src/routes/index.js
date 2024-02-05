@@ -31,21 +31,16 @@ router.get('/', (req, res) => {
   res.status(200).json({
     status: 'ok',
     author,
-    // Use your own GitHub URL for this!
     githubUrl: 'https://github.com/okuti2/fragments',
     version,
   });
 });
 
-/**
- * Get a list of fragments for the current user
- */
-module.exports = (req, res) => {
-  // TODO: this is just a placeholder to get something working
-  res.status(200).json({
-    status: 'ok',
-    fragments: [],
-  });
-};
+//Simulate an error
+// eslint-disable-next-line no-unused-vars
+router.get('/error', (req, res) => {
+  throw new Error('unable to process request');
+});
+
 
 module.exports = router;

@@ -5,23 +5,16 @@ const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
 const passport = require('passport');
-
-
-
-// author and version from our package.json file
-// TODO: make sure you have updated your name in the `author` section
-//const { author, version } = require('../package.json');
-
 const logger = require('./logger');
-if (process.env.LOG_LEVEL === 'debug') {
-  logger.debug(process.env);
-}
 const pino = require('pino-http')({
   // Use our default logger instance, which is already configured
   logger,
 });
 const authenticate = require('./auth');
 
+if (process.env.LOG_LEVEL === 'debug') {
+  logger.debug(process.env);
+}
 
 
 // Create an express app instance we can use to attach middleware and HTTP routes
@@ -41,20 +34,12 @@ app.use(compression());
 
 // modifications to src/app.js
 
-// Remove `app.get('/', (req, res) => {...});` and replace with:
-
 // Define our routes
 app.use('/', require('./routes'));
-
-// Use gzip/deflate compression middleware
-app.use(compression());
 
 // Set up our passport authentication middleware
 passport.use(authenticate.strategy());
 app.use(passport.initialize());
-
-// Define our routes
-app.use('/', require('./routes'));
 
 // Add 404 middleware to handle any requests for resources that can't be found
 app.use((req, res) => {
@@ -67,7 +52,11 @@ app.use((req, res) => {
   });
 });
 
+
 // Add error-handling middleware to deal with anything else
+
+
+
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   // We may already have an error response we can use, but if not,

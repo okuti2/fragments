@@ -3,6 +3,8 @@
 const request = require('supertest');
 
 const app = require('../../src/app');
+const { describe } = require('node:test');
+
 
 describe('GET /unknownpath', () => {
     //If the resources can't be found
@@ -17,4 +19,16 @@ describe('GET /unknownpath', () => {
         },
       });
     });
-  });
+
+    test('server error should give 500', async () => {
+      const res = await request(app).get('/error'); 
+      expect(res.statusCode).toBe(500);
+      expect(res.body).toEqual({
+        status: 'error',
+        error: {
+          message: 'unable to process request',
+          code: 500,
+        },
+      });
+    });
+});

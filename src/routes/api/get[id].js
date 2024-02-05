@@ -8,7 +8,7 @@ const Fragment = require('../../model/fragment');
  * Initial implementation of GET /v1/fragments
  */
 module.exports = (req, res) => {
-  Fragment.Fragment.byUser(req.user, req.query.expand)
+  Fragment.Fragment.byId(req.user, req.params.id)
     .then((fragments) => {
       res.status(200).json({
         status: 'ok',
@@ -24,10 +24,4 @@ module.exports = (req, res) => {
         },
       });
     });
-  // TODO: this is just a placeholder. To get something working, return an empty array...
-  // res.status(200).json({
-  //   status: 'ok',
-  //   // TODO: change me
-  //   fragments: [],
-  // });
 };

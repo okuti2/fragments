@@ -3,6 +3,8 @@
 const { randomUUID } = require('crypto');
 // Use https://www.npmjs.com/package/content-type to create/parse Content-Type headers
 const contentType = require('content-type');
+const logger = require('../logger');
+
 
 // Functions for working with fragment metadata/data using our DB
 const {
@@ -14,10 +16,10 @@ const {
   deleteFragment,
 } = require('./data/memory/index');
 
-const validTypes = ['text/plain', 'text/plain; charset=utf-8'];
 
 
 class Fragment {
+
   constructor({ id, ownerId, created, updated, type, size = 0 }) {
     if(!ownerId || !type ){
         throw new Error("ownerId and type are required");
@@ -48,6 +50,7 @@ class Fragment {
    */
   static async byUser(ownerId, expand = false) {
     const fragments = await listFragments(ownerId, expand);
+    logger.debug({ fragments }, 'Fragments by user');
     return fragments;
   }
 
@@ -127,6 +130,7 @@ class Fragment {
    * @returns {Array<string>} list of supported mime types
    */
   get formats() {
+    const validTypes = ['text/plain', 'text/plain; charset=utf-8'];
     return validTypes.filter(type => type.startsWith('text/') && type !== this.type);
   }
 
@@ -136,6 +140,7 @@ class Fragment {
    * @returns {boolean} true if we support this Content-Type (i.e., type/subtype)
    */
   static isSupportedType(value) {
+    const validTypes = ['text/plain', 'text/plain; charset=utf-8'];
     return validTypes.includes(value);
   }
 }

@@ -1,8 +1,6 @@
 // src/routes/api/get.js
 const Fragment = require('../../model/fragment');
 
-
-
 /**
  * Get a list of fragments for the current user
  * Initial implementation of GET /v1/fragments

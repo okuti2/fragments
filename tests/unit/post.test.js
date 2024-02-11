@@ -41,4 +41,4 @@ describe('POST /v1/fragments', () => {
     expect(res.body.error).toBe('Request body must be binary data');
   });
 
-});
+})

@@ -1,8 +1,8 @@
 // tests/unit/get.test.js
 
 const request = require('supertest');
-
 const app = require('../../src/app');
+
 
 describe('GET /v1/fragments', () => {
   // If the request is missing the Authorization header, it should be forbidden
@@ -19,11 +19,5 @@ describe('GET /v1/fragments', () => {
     expect(res.body.status).toBe('ok');
     expect(Array.isArray(res.body.fragments)).toBe(true);
   });
-
-    // Using a valid username/password to get the fragment by id should give a success result with a .fragments array
-    // test('authenticated users get a fragments array by id', async () => {
-    //   const res = await request(app).get('/v1/fragments/1').auth('
-
-
   // TODO: we'll need to add tests to check the contents of the fragments array later
 });

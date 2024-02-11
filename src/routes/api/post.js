@@ -11,16 +11,11 @@ module.exports = (req, res) => {
 
         // Check if the body was parsed as a Buffer
         if (!Buffer.isBuffer(req.body)) {
+          // Check if the Content-Type is supported
           return res.status(400).json({ error: 'Request body must be binary data' });
         }
 
         const type = req.headers['content-type'];
-
-        // Check if the Content-Type is supported
-        if (!Fragment.Fragment.isSupportedType(type)) {
-          logger.debug({ type }, 'Unsupported Content-Type');
-          return res.status(415).json({ error: 'Unsupported Content-Type' });
-        }
     
         // Create a new fragment
         const fragment = new Fragment.Fragment({

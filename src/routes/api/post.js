@@ -8,8 +8,6 @@ const Fragment = require('../../model/fragment');
  */
 module.exports = (req, res) => {
     try {
-        logger.debug(req.originalUrl);
-        logger.debug(req.url);
 
         // Check if the body was parsed as a Buffer
         if (!Buffer.isBuffer(req.body)) {
@@ -18,9 +16,9 @@ module.exports = (req, res) => {
 
         const type = req.headers['content-type'];
 
-    
         // Check if the Content-Type is supported
         if (!Fragment.Fragment.isSupportedType(type)) {
+          logger.debug({ type }, 'Unsupported Content-Type');
           return res.status(415).json({ error: 'Unsupported Content-Type' });
         }
     
@@ -30,14 +28,17 @@ module.exports = (req, res) => {
           type: type,
           size: req.body.length,
         });
+
+        logger.debug(req.body.toString(), 'Fragment data should be unbuffered');
     
         // Save the fragment and its data
         fragment.save();
         fragment.setData(req.body);
-    
+
+        const URL = process.env.API_URL|| req.headers.host;
         // Send the response
         res.status(201)
-          .set('Location', `${process.env.API_URL}${req.originalUrl}/${fragment.id}`)
+          .location(`${URL.toString()}/v1/fragments/${fragment.id}`)
           .json({
             status: 'ok',
             fragment: {

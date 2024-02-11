@@ -36,10 +36,11 @@ async function listFragments(ownerId, expand = false) {
     return fragments;
   }else{
     logger.debug({ fragments }, 'Fragments by user found in listfragments');
+    // Otherwise, map to only send back the ids
+    return fragments.map((fragment) => fragment.id);
   }
 
-  // Otherwise, map to only send back the ids
-  return fragments.map((fragment) => fragment.id);
+  
 }
 
 // Delete a fragment's metadata and data from memory db. Returns a Promise

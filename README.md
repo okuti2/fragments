@@ -50,5 +50,7 @@ use git status to check the status of file changes
 
 curl -i -u toyosikuti@gmail.com:T0y0s1Kut1@1012 http://localhost:8080/v1/fragments
 
+curl -i -u toyosikuti@gmail.com:T0y0s1Kut1@1012 http://localhost:8080/v1/fragments/2c0abee3-5d21-4819-bbed-2516181e346c
+
 curl -i -X POST -u toyosikuti@gmail.com:T0y0s1Kut1@1012 -H "Content-Type: text/plain" -d "This is a fragment" http://localhost:8080/v1/fragments
 

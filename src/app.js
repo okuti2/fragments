@@ -78,10 +78,6 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.use((req, res, next) => {
-  process.env.API_URL = req.headers.host;
-  next();
-});
 
 // Export our `app` so we can access it in server.js
 module.exports = app;

@@ -56,3 +56,18 @@ curl -i -X POST -u email:password -H "Content-Type: text/plain" -d "This is a fr
 
 curl -i -H "Authorization: Bearer {id_token}" http://localhost:8080/v1/fragments/{fragment_id}
 
+- Running DockerFiles
+
+- To build the image to a container
+docker build -t okuti/fragments:latest .
+
+- To run on docker and access on browser
+docker run --rm --name fragments --env-file .env -p 8080:8080 fragments:latest
+
+- How to run a detached container 
+docker run --rm --name fragments --env-file .env -p 8080:8080 -d fragments:latest
+
+- To check the logs from a detached logs (-f to follow)
+docker logs -f <dockerid>
+
+- Pushing images into DockerHub

@@ -1,7 +1,7 @@
 # Build the fragments microservice Back-end API using Node.js
 
 # Use node version 18.17.0
-FROM node:18.17.0
+FROM node:18.17.0@sha256:c85dc4392f44f5de1d0d72dd20a088a542734445f99bed7aa8ac895c706d370d AS dependencies
 
 LABEL maintainer="Kim Lee <klee@example.com>" \
       description="Fragments node.js microservice"
@@ -28,7 +28,17 @@ COPY package*.json ./
 # Install node dependencies defined in package-lock.json
 RUN npm install
 
+#####################################################################
+#Stage 1: Build the fragments microservice Back-end API using Node.js
+
+FROM node:20.11.1-alpine@sha256:c0a3badbd8a0a760de903e00cedbca94588e609299820557e72cba2a53dbaa2c AS build
+
+# Use /app as our working directory
+WORKDIR /app
+
 # Copy src to /app/src/
+COPY --from=dependencies  /app /app 
+
 COPY ./src ./src
 
 # Copy our HTPASSWD file

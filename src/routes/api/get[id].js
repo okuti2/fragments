@@ -6,6 +6,9 @@ module.exports = async (req, res) => {
       try{
         await Fragment.Fragment.byId(req.user, req.params.id).then((fragment) => {
           fragment.getData().then((data) => {
+            
+            res.setHeader('Content-Type', fragment.type);
+            res.setHeader('Content-Length', fragment.size);
             res.status(200).send(data);
           }).catch((err) => {
             res.status(500).json({

@@ -63,7 +63,7 @@ class Fragment {
   static async byId(ownerId, id) {
     const fragments = await readFragment(ownerId, id);
     if(!fragments){
-        throw new Error("Fragment not found");
+      throw new Error("Fragment not found");
     }
     return fragments;
   }
@@ -91,8 +91,9 @@ class Fragment {
    * Gets the fragment's data from the database
    * @returns Promise<Buffer>
    */
-  getData() {
-    return readFragmentData(this.ownerId, this.id);
+  async getData() {
+    const data = await readFragmentData(this.ownerId, this.id);
+    return data;
   }
 
   /**
@@ -130,8 +131,29 @@ class Fragment {
    * @returns {Array<string>} list of supported mime types
    */
   get formats() {
-    const validTypes = ['text/plain', 'text/plain; charset=utf-8'];
-    return validTypes.filter(type => type.startsWith('text/') && type !== this.type);
+    var validTypes = [];
+    switch(this.mimeType){
+      case 'text/plain':
+        validTypes =  ['text/plain'];
+        break;
+      case 'text/markdown':
+        validTypes = ['text/plain', 'text/html', 'text/markdown'];
+        break;
+      case 'text/html':
+        validTypes = ['text/plain', 'text/html'];
+        break;
+      case 'text/csv':
+        validTypes = ['text/plain', 'application/json', 'text/csv'];
+        break;
+      case 'application/json':
+        validTypes = ['text/plain', 'application/json'];
+        break;
+      default:
+        if(this.mimeType.startsWith('image/')){
+          validTypes = ['image/png', 'image/jpeg', 'image/webp','image/avif', 'image/gif'];
+        }
+    }
+    return validTypes;
   }
 
   /**
@@ -140,7 +162,7 @@ class Fragment {
    * @returns {boolean} true if we support this Content-Type (i.e., type/subtype)
    */
   static isSupportedType(value) {
-    const validTypes = ['text/plain', 'text/plain; charset=utf-8'];
+    const validTypes = ['text/plain', 'text/plain; charset=utf-8','text/markdown', 'text/html', 'text/csv', 'application/json'];
     return validTypes.includes(value);
   }
 }

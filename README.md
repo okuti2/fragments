@@ -52,7 +52,7 @@ curl -i -u email:password http://localhost:8080/v1/fragments
 
 curl -i -u email:password http://localhost:8080/v1/fragments/{fragment_id}
 
-curl -i -X POST -u email:password -H "Content-Type: text/plain" -d "This is a fragment" http://localhost:8080/v1/fragments
+curl -i -X POST -u email:T0y0s1Kut1@1012 -H "Content-Type: text/plain" -d "This is a fragment" http://localhost:8080/v1/fragments
 
 curl -i -H "Authorization: Bearer {id_token}" http://localhost:8080/v1/fragments/{fragment_id}
 

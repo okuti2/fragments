@@ -24,7 +24,9 @@ const app = express();
 app.use(pino);
 
 // Use helmetjs security middleware
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: false,
+}));
 
 // Use CORS middleware so we can make requests across origins
 app.use(cors());

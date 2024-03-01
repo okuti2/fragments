@@ -5,8 +5,8 @@ const app = require('../../src/app');
 
 describe('GET /v1/fragments/:id', () => {
 
-    // Using a valid username/password to get the fragment by id should give a success result with a .fragments array
-    test('authenticated users get a fragments array by id', async () => {
+    // Using a valid username/password to get the fragment by id should give a success result with a fragment data
+    test('authenticated users get a fragments data by id', async () => {
       const body = 'This is a fragment';
       const res = await request(app)
       .post('/v1/fragments')
@@ -17,7 +17,7 @@ describe('GET /v1/fragments/:id', () => {
 
       const fragmentId = res.body.fragment.id;
       const res2 = await request(app).get(`/v1/fragments/${fragmentId}`).auth('user1@email.com', 'password1');
-      expect(res2.body.toString()).toBe(body);
+      expect(res2.text).toBe(body);
       
     });
 

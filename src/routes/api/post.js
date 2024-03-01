@@ -27,7 +27,7 @@ module.exports = (req, res) => {
         logger.debug(req.body.toString(), 'Fragment data should be unbuffered');
     
         // Save the fragment and its data
-        fragment.save();
+        //fragment.save();
         fragment.setData(req.body);
 
         const URL = process.env.API_URL|| req.headers.host;

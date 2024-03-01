@@ -48,11 +48,11 @@ use git status to check the status of file changes
 - Check the coverage for the tests 
   npm run coverage
 
-curl -i -u email:password http://localhost:8080/v1/fragments
+curl.exe -i -u toyosikuti@gmail.com:T0y0s1Kut1@1012 http://localhost:8080/v1/fragments
 
 curl -i -u email:password http://localhost:8080/v1/fragments/{fragment_id}
 
-curl -i -X POST -u email:T0y0s1Kut1@1012 -H "Content-Type: text/plain" -d "This is a fragment" http://localhost:8080/v1/fragments
+curl.exe -i -X POST -u toyosikuti@gmail.com:T0y0s1Kut1@1012 -H "Content-Type: text/html" -d "This is a fragment" http://localhost:8080/v1/fragments
 
 curl -i -H "Authorization: Bearer {id_token}" http://localhost:8080/v1/fragments/{fragment_id}
 

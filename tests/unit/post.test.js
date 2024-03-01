@@ -35,7 +35,7 @@ describe('POST /v1/fragments', () => {
       .post('/v1/fragments')
       .set('Content-Type', 'text/css')
       .auth('user1@email.com', 'password1')
-      .send({'This is a fragment' : 'This is a fragment'})
+      .send('font-size: 12px; color: red;')
       .expect(400); 
     
     expect(res.body.error).toBe('Request body must be binary data');

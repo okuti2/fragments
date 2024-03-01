@@ -162,9 +162,11 @@ class Fragment {
    * @returns {boolean} true if we support this Content-Type (i.e., type/subtype)
    */
 
+  // Update to proper functionality
   static isSupportedType(value) {
-    const validTypes = ['text/plain', 'text/plain; charset=utf-8','text/markdown', 'text/html', 'text/csv', 'application/json'];
-    return validTypes.includes(value);
+    const validTypes = ['text/plain','text/markdown', 'text/html', 'text/csv', 'application/json', 'image/png', 'image/jpeg', 'image/webp','image/avif', 'image/gif'];
+    const cType = value.split(';')[0];
+    return validTypes.includes(cType);
   }
   
 }

@@ -161,10 +161,12 @@ class Fragment {
    * @param {string} value a Content-Type value (e.g., 'text/plain' or 'text/plain: charset=utf-8')
    * @returns {boolean} true if we support this Content-Type (i.e., type/subtype)
    */
+
   static isSupportedType(value) {
     const validTypes = ['text/plain', 'text/plain; charset=utf-8','text/markdown', 'text/html', 'text/csv', 'application/json'];
     return validTypes.includes(value);
   }
+  
 }
 
 module.exports.Fragment = Fragment;

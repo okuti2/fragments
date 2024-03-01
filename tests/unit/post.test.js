@@ -33,7 +33,7 @@ describe('POST /v1/fragments', () => {
   test('non-binary request body should be rejected', async () => {
     const res = await request(app)
       .post('/v1/fragments')
-      .set('Content-Type', 'application/json')
+      .set('Content-Type', 'text/css')
       .auth('user1@email.com', 'password1')
       .send({'This is a fragment' : 'This is a fragment'})
       .expect(400); 

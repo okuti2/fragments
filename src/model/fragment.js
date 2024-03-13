@@ -4,6 +4,7 @@ const { randomUUID } = require('crypto');
 // Use https://www.npmjs.com/package/content-type to create/parse Content-Type headers
 const contentType = require('content-type');
 const logger = require('../logger');
+const MarkdownIt = require('markdown-it');
 
 
 // Functions for working with fragment metadata/data using our DB
@@ -61,11 +62,11 @@ class Fragment {
    * @returns Promise<Fragment>
    */
   static async byId(ownerId, id) {
-    const fragments = await readFragment(ownerId, id);
-    if(!fragments){
+    const fragment = await readFragment(ownerId, id);
+    if(!fragment){
       throw new Error("Fragment not found");
     }
-    return fragments;
+    return fragment;
   }
 
   /**
@@ -103,8 +104,9 @@ class Fragment {
    */
   async setData(data) {
     this.size = data.length;
-    this.updated = new Date().toISOString();
-    await writeFragment(this);
+    this.save();
+    // this.updated = new Date().toISOString();
+    // await writeFragment(this);
     return writeFragmentData(this.ownerId, this.id, data);
   }
 
@@ -115,7 +117,7 @@ class Fragment {
    */
   get mimeType() {
     const { type } = contentType.parse(this.type);
-    return type;
+    return type.split(';')[0]
   }
 
   /**
@@ -149,9 +151,10 @@ class Fragment {
         validTypes = ['text/plain', 'application/json'];
         break;
       default:
-        if(this.mimeType.startsWith('image/')){
-          validTypes = ['image/png', 'image/jpeg', 'image/webp','image/avif', 'image/gif'];
-        }
+        // I do not need this yet
+        // if(this.mimeType.startsWith('image/')){
+        //   validTypes = ['image/png', 'image/jpeg', 'image/webp','image/avif', 'image/gif'];
+        // }
     }
     return validTypes;
   }
@@ -164,11 +167,60 @@ class Fragment {
 
   // Update to proper functionality
   static isSupportedType(value) {
-    const validTypes = ['text/plain','text/markdown', 'text/html', 'text/csv', 'application/json', 'image/png', 'image/jpeg', 'image/webp','image/avif', 'image/gif'];
+    const validTypes = ['application/json'];
     const cType = value.split(';')[0];
-    return validTypes.includes(cType);
+    return validTypes.includes(cType) || cType.startsWith('text/');
   }
-  
+
+  convertExtension(ext){
+    switch(ext){
+      case 'json':
+        return 'application/json';
+      case 'html':
+        return 'text/html';
+      case 'csv':
+        return 'text/csv';
+      case 'md':
+        return 'text/markdown';
+      case 'txt':
+        return 'text/plain';
+      case 'png':
+        return 'image/png';
+      case 'jpg':
+        return 'image/jpeg';
+      case 'webp':
+        return 'image/webp';
+      case 'avif':
+        return 'image/avif';
+      case 'gif':
+        return 'image/gif';
+    }
+  }
+
+  // Convert the existing fragment to the given type
+  async convertFragment(extension){
+    logger.debug({ extension }, 'Converting fragment');
+    const newType = this.convertExtension(extension);
+    const data = await this.getData();
+
+    if(!this.formats.includes(newType)){
+      throw new Error("Unsupported type");
+    }
+    if(this.type === 'text/markdown' && newType === 'text/html'){
+      logger.debug({ newType }, 'Converting markdown to html');
+      this.type = newType;
+      
+      const md = MarkdownIt();
+      
+      const convertedData = md.render(data.toString());
+      logger.debug({ convertedData }, 'Converted fragment');
+      this.size = convertedData.length;
+      await this.setData(convertedData);
+      return convertedData;
+    }
+    return data;
+  }
+
 }
 
 module.exports.Fragment = Fragment;

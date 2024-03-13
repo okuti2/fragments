@@ -1,4 +1,4 @@
-// src/routes/api/get[id][post].js
+// src/routes/api/get-id-post.js
 const Fragment = require('../../model/fragment');
 //const logger = require('../../logger');
 

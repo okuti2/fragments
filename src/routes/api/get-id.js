@@ -1,15 +1,16 @@
-// src/routes/api/get[id].js
+// src/routes/api/get-id.js
 const Fragment = require('../../model/fragment');
 const logger = require('../../logger');
 
 module.exports = async (req, res) => {
       try{
-        //const extension = req.params.ext;
+        const extension = req.params.ext;
         await Fragment.Fragment.byId(req.user, req.params.id).then((fragment) => {
-
-          fragment.getData().then((data) => {
-
-            res.setHeader('Content-Type', fragment.type);
+          res.setHeader('Content-Type', fragment.type);
+          (extension ? fragment.convertFragment(extension) : fragment.getData())
+          .then((data) => {
+            logger.debug(fragment.mimeType, 'Fragment type');
+            res.setHeader('Content-Type', fragment.mimeType); // Keeps saving with the charset=utf-8 encoded
             res.setHeader('Content-Length', fragment.size);
             res.status(200).send(data);
             

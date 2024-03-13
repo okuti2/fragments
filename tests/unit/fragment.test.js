@@ -6,17 +6,14 @@ const wait = async (ms = 10) => new Promise((resolve) => setTimeout(resolve, ms)
 
 const validTypes = [
   `text/plain; charset=utf-8`,
-  /*
-   Currently, only text/plain is supported. Others will be added later.
-
   `text/markdown`,
   `text/html`,
   `application/json`,
-  `image/png`,
+  /*`image/png`,
   `image/jpeg`,
   `image/webp`,
-  `image/gif`,
-  */
+  `image/gif`, */
+  
 ];
 
 describe('Fragment class', () => {
@@ -168,6 +165,42 @@ describe('Fragment class', () => {
       });
       expect(fragment.formats).toEqual(['text/plain']);
     });
+
+    test('formats returns the expected result for markdown text', () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'text/markdown; charset=utf-8',
+        size: 0,
+      });
+      expect(fragment.formats).toEqual(['text/plain', 'text/html', 'text/markdown']);
+    });
+
+    test('formats returns the expected result for html text', () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'text/html; charset=utf-8',
+        size: 0,
+      });
+      expect(fragment.formats).toEqual(['text/plain', 'text/html']);
+    });
+
+    test('formats returns the expected result for csv text', () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'text/csv; charset=utf-8',
+        size: 0,
+      });
+      expect(fragment.formats).toEqual(['text/plain', 'application/json', 'text/csv']);
+    });
+
+    test('formats returns the expected result for application json', () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'application/json; charset=utf-8',
+        size: 0,
+      });
+      expect(fragment.formats).toEqual(['text/plain', 'application/json']);
+    });
   });
 
   describe('save(), getData(), setData(), byId(), byUser(), delete()', () => {
@@ -254,6 +287,32 @@ describe('Fragment class', () => {
 
       await Fragment.delete('1234', fragment.id);
       expect(() => Fragment.byId('1234', fragment.id)).rejects.toThrow();
+    });
+  });
+
+  describe('Converting fragments to a different supported type', () => {
+    test('convertExtension()', async () => {
+      const fragment = new Fragment({ ownerId: '1234', type: 'text/markdown', size: 0 });
+      expect(fragment.convertExtension('txt')).toBe('text/plain');
+      expect(fragment.convertExtension('json')).toBe('application/json');
+    });
+    
+    test('convertFragment()', async () => {
+      const fragment = new Fragment({ ownerId: '1234', type: 'text/markdown', size: 0 });
+      await fragment.save();
+      await fragment.setData(Buffer.from('hello'));
+
+      const newFragmentData = await fragment.convertFragment('html');
+      expect(fragment.type).toBe('text/html');
+      expect(await newFragmentData).toEqual('<p>hello</p>\n');
+    });
+
+    test('convertFragment() throws if the type is not supported', async () => {
+      const fragment = new Fragment({ ownerId: '1234', type: 'text/markdown', size: 0 });
+      await fragment.save();
+      await fragment.setData(Buffer.from('hello'));
+
+      expect(() => fragment.convertFragment('docx')).rejects.toThrow();
     });
   });
 });

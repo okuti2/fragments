@@ -13,8 +13,8 @@ const router = express.Router();
 
 // Define our first route, which will be: GET /v1/fragments
 router.get('/fragments', require('./get'));
-router.get('/fragments/:id.:ext?', require('./get[id]'));
-router.get('/fragments/:id/info', require('./get[id][info]'));
+router.get('/fragments/:id.:ext?', require('./get-id'));
+router.get('/fragments/:id/info', require('./get-id-info'));
 
 const rawBody = () =>
   express.raw({

@@ -4,7 +4,7 @@
 # Use node version 20.11.1
 FROM node:20.11.1@sha256:f3299f16246c71ab8b304d6745bb4059fa9283e8d025972e28436a9f9b36ed24 AS dependencies
 
-LABEL maintainer="Kim Lee <klee@example.com>"\
+LABEL maintainer="Olutoyosi Kuti <okuti2@myseneca.ca>"\
       description="Fragments node.js microservice"
 
 # We default to use port 8080 in our service

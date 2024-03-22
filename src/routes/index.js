@@ -1,6 +1,7 @@
 // src/routes/index.js
 
 const express = require('express');
+const { hostname } = require('os');
 
 // version and author from package.json
 const { version, author } = require('../../package.json');
@@ -33,6 +34,8 @@ router.get('/', (req, res) => {
     author,
     githubUrl: 'https://github.com/okuti2/fragments',
     version,
+    // Include the hostname in the response
+    hostname: hostname(),
   });
 });
 

@@ -39,7 +39,7 @@ describe('POST /v1/fragments', () => {
       .set('Content-Type', 'image/gif')
       .auth('user1@email.com', 'password1')
       .send('font-size: 12px; color: red;')
-      .expect(400); 
+      .expect(415); 
     
     expect(res.body.error).toBe('Request body must be binary data');
   });

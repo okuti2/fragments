@@ -73,3 +73,6 @@ docker run --rm --name fragments --env-file .env -p 8080:8080 -d fragments:lates
 docker logs -f <dockerid>
 
 - Pushing images into DockerHub
+
+- building docker image for fragments-ui 
+docker build --build-arg AWS_COGNITO_POOL_ID=us-east-1_xMACBztpc --build-arg AWS_COGNITO_CLIENT_ID=7l8d7ldffs6oadoveb90s9sial --build-arg AWS_COGNITO_HOSTED_UI_DOMAIN=okuti.auth.us-east-1.amazoncognito.com --build-arg OAUTH_SIGN_IN_REDIRECT_URL=http://localhost:1234 --build-arg OAUTH_SIGN_OUT_REDIRECT_URL=http://localhost:1234 -t fragments-ui .

@@ -13,7 +13,7 @@ module.exports = async (req, res) => {
         // Check if the body was parsed as a Buffer
         if (!Buffer.isBuffer(req.body)) {
           // Check if the Content-Type is supported
-          return res.status(400).json({ error: 'Request body must be binary data' });
+          return res.status(415).json({ error: 'Request body must be binary data' });
         }
 
         const type = req.headers['content-type'];

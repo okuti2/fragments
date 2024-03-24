@@ -10,7 +10,7 @@ module.exports = async (req, res) => {
           (extension ? fragment.convertFragment(extension) : fragment.getData())
           .then((data) => {
             logger.debug(fragment.mimeType, 'Fragment type');
-            res.setHeader('Content-Type', fragment.mimeType); // Keeps saving with the charset=utf-8 encoded
+            res.setHeader('Content-Type', fragment.type); // Keeps saving with the charset=utf-8 encoded
             res.setHeader('Content-Length', fragment.size);
             res.status(200).send(data);
             

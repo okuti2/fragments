@@ -32,6 +32,10 @@
                 {
                     "name": "AWS_COGNITO_CLIENT_ID",
                     "value": "7l8d7ldffs6oadoveb90s9sial"
+                },
+                {
+                    "name": "AWS_S3_BUCKET_NAME",
+                    "value": "okuti2-fragments"
                 }
             ],
             "environmentFiles": [],

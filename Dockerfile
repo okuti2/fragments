@@ -45,3 +45,7 @@ CMD ["npm", "start"]
 
 # We run our service on port 8080
 EXPOSE 8080
+
+# Provide a health check on the server in the container
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+  CMD curl --fail localhost || exit 1

@@ -15,6 +15,7 @@ const router = express.Router();
 router.get('/fragments', require('./get'));
 router.get('/fragments/:id.:ext?', require('./get-id'));
 router.get('/fragments/:id/info', require('./get-id-info'));
+router.delete('/fragments/:id', require('./delete'));
 
 const rawBody = () =>
   express.raw({

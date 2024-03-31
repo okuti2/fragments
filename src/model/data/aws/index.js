@@ -37,6 +37,8 @@ async function writeFragmentData(ownerId, id, data) {
 
   try {
     // Use our client to send the command
+    const { Bucket, Key, Body } = params;
+    logger.info({ Bucket, Key, Body }, 'Sending fragment data to s3');
     await s3Client.send(command);
   } catch (err) {
     // If anything goes wrong, log enough info that we can debug
@@ -83,8 +85,10 @@ async function readFragmentData(ownerId, id) {
   try {
     // Get the object from the Amazon S3 bucket. It is returned as a ReadableStream.
     const data = await s3Client.send(command);
+    const { Bucket, Key } = params;
+    logger.info({ Bucket, Key }, 'Reading fragment data from S3');
     // Convert the ReadableStream to a Buffer
-    return streamToBuffer(data.Body);
+    return await streamToBuffer(data.Body);
   } catch (err) {
     const { Bucket, Key } = params;
     logger.error({ err, Bucket, Key }, 'Error streaming fragment data from S3');

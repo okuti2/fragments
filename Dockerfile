@@ -19,15 +19,21 @@ ENV PORT=8080 \
 # Use /app as our working directory
 WORKDIR /app
 
-COPY package*.json /app/
+COPY package*.json ./
 
 # Install node dependencies defined in package-lock.json
 RUN npm install
 
+# Copy src to /app/src/
+COPY ./src ./src
 ##################################################################################################
 # Stage 1: build the fragments microservice
 
 FROM node:20.11.1-alpine@sha256:c0a3badbd8a0a760de903e00cedbca94588e609299820557e72cba2a53dbaa2c
+
+ENV PORT=8080
+
+COPY --from=dependencies /app /app
 
 # Use /app as our working directory
 WORKDIR /app
@@ -38,14 +44,15 @@ COPY ./tests/.htpasswd ./tests/.htpasswd
 # Copy src to /app/src/
 COPY ./src ./src
 
-COPY --from=dependencies /app /app
+HEALTHCHECK --interval=15s --timeout=30s --start-period=10s --retries=3 \
+  CMD wget http://localhost:${PORT}/ -q -O /dev/null || exit 1
 
+ 
 # Start the container by running our server
 CMD ["npm", "start"]
+
 
 # We run our service on port 8080
 EXPOSE 8080
 
 # Provide a health check on the server in the container
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-  CMD curl --fail localhost || exit 1

@@ -1,4 +1,4 @@
-Authenticated POST to /v1/fragments
+# Authenticated POST to /v1/fragments
 POST http://localhost:8080/v1/fragments
 # We're sending a plain text fragment
 Content-Type: text/plain
@@ -36,7 +36,7 @@ GET {{url}}
 user1@email.com:password1
 
 HTTP/1.1 200
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
 Content-Length: 9
 [Asserts]
 body == "Hello S3!"

@@ -30,6 +30,10 @@
                     "value": "8080"
                 },
                 {
+                    "name": "AWS_DYNAMODB_TABLE_NAME",
+                    "value": "fragments"
+                  },
+                {
                     "name": "AWS_COGNITO_CLIENT_ID",
                     "value": "7l8d7ldffs6oadoveb90s9sial"
                 },

@@ -15,12 +15,17 @@ module.exports = async (req, res) => {
             res.status(200).send(data);
             
           }).catch((err) => {
-            res.status(500).json({
-              status: 'error',
-              error: {
-                message: err.message,
-                code: 500,
-              }});
+            if (err.message === 'unable to read fragment data') {
+              // Handle specific error from readFragmentData as 404
+              res.status(404).json({ error: 'Fragment not found' });
+            }else{
+              res.status(500).json({
+                status: 'error',
+                error: {
+                  message: err.message,
+                  code: 500,
+                }});
+            }
           });
         });
         }

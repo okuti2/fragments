@@ -18,11 +18,13 @@ function readFragment(ownerId, id) {
 
 // Write a fragment's data buffer to memory db. Returns a Promise
 function writeFragmentData(ownerId, id, buffer) {
+  logger.debug({ ownerId, id }, 'Writing fragment data inside memory-db');
   return data.put(ownerId, id, buffer);
 }
 
 // Read a fragment's data from memory db. Returns a Promise
 function readFragmentData(ownerId, id) {
+  logger.debug({ ownerId, id }, 'Reading fragment data inside memory-db');
   return data.get(ownerId, id);
 }
 

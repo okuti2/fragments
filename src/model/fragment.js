@@ -66,7 +66,7 @@ class Fragment {
     if(!fragment){
       throw new Error("Fragment not found");
     }
-    return fragment;
+    return new Fragment(fragment);
   }
 
   /**

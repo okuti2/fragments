@@ -46,7 +46,7 @@ describe('PUT /v1/fragments:id', () => {
       .auth('user1@email.com', 'password1')
       .set('content-type', 'text/html')
       .send('This is an updated fragment')
-      .expect(400);
+      .expect(404);
   });
 
   // PUT /fragments/:id cannot find invalid id.

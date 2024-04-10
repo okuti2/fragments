@@ -47,7 +47,7 @@ HEALTHCHECK --interval=15s --timeout=30s --start-period=10s --retries=3 \
 
  
 # Start the container by running our server
-CMD ["node", "start"]
+CMD ["npm", "start"]
 
 
 # We run our service on port 8080

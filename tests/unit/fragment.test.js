@@ -1,4 +1,7 @@
+const { describe } = require('node:test');
 const { Fragment } = require('../../src/model/fragment');
+const fs = require('fs');
+const path = require('path');
 
 // Wait for a certain number of ms. Feel free to change this value
 // if it isn't long enough for your test runs. Returns a Promise.
@@ -9,10 +12,10 @@ const validTypes = [
   `text/markdown`,
   `text/html`,
   `application/json`,
-  /*`image/png`,
+  `image/png`,
   `image/jpeg`,
   `image/webp`,
-  `image/gif`, */
+  `image/gif`, 
   
 ];
 
@@ -201,6 +204,15 @@ describe('Fragment class', () => {
       });
       expect(fragment.formats).toEqual(['text/plain', 'application/json']);
     });
+
+    test('formats returns the expected result for image/', () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'image/png',
+        size: 0,
+      });
+      expect(fragment.formats).toEqual(['image/png', 'image/jpeg', 'image/webp','image/avif', 'image/gif']);
+    });
   });
 
   describe('save(), getData(), setData(), byId(), byUser(), delete()', () => {
@@ -305,6 +317,126 @@ describe('Fragment class', () => {
       const newFragmentData = await fragment.convertFragment('html');
       expect(fragment.type).toBe('text/html');
       expect(await newFragmentData).toEqual('<p>hello</p>\n');
+    });
+
+    test('convertFragment() throws if the type is not supported', async () => {
+      const fragment = new Fragment({ ownerId: '1234', type: 'text/markdown', size: 0 });
+      await fragment.save();
+      await fragment.setData(Buffer.from('hello'));
+
+      expect(() => fragment.convertFragment('docx')).rejects.toThrow();
+    });
+  });
+
+  describe('Converting fragments to a different supported type', () => {
+    test('convertExtension()', async () => {
+      const fragment = new Fragment({ ownerId: '1234', type: 'text/markdown', size: 0 });
+      expect(fragment.convertExtension('txt')).toBe('text/plain');
+      expect(fragment.convertExtension('json')).toBe('application/json');
+      expect(fragment.convertExtension('html')).toBe('text/html');
+      expect(fragment.convertExtension('csv')).toBe('text/csv');
+      expect(fragment.convertExtension('png')).toBe('image/png');
+      expect(fragment.convertExtension('jpeg')).toBe('image/jpeg');
+      expect(fragment.convertExtension('webp')).toBe('image/webp');
+      expect(fragment.convertExtension('gif')).toBe('image/gif');
+      expect(fragment.convertExtension('avif')).toBe('image/avif');
+
+    });
+    
+    test('can convert from markdown to text', async () => {
+      // markdown to txt
+      const fragment = new Fragment({ ownerId: '1234', type: 'text/markdown', size: 0 });
+      await fragment.save();
+      await fragment.setData(Buffer.from('hello'));
+
+      const newFragmentData = await fragment.convertFragment('txt');
+      expect(fragment.type).toBe('text/plain');
+      expect(await newFragmentData).toEqual('hello');
+    });
+
+    test('can convert from markdown to html', async () => {
+      // markdown to html
+      const fragment2 = new Fragment({ ownerId: '1234', type: 'text/markdown', size: 0 });
+      await fragment2.save();
+      await fragment2.setData(Buffer.from('hello'));
+
+      const newFragmentData2 = await fragment2.convertFragment('html');
+      expect(fragment2.type).toBe('text/html');
+      expect(await newFragmentData2).toEqual('<p>hello</p>\n');
+    });
+
+    test('can convert from html to text', async () => {
+      // html to txt
+      const fragment3 = new Fragment({ ownerId: '1234', type: 'text/html', size: 0 });
+      await fragment3.save();
+      await fragment3.setData(Buffer.from('<p>hello</p>'));
+
+      const newFragmentData3 = await fragment3.convertFragment('txt');
+      expect(fragment3.type).toBe('text/plain');
+      expect(await newFragmentData3).toEqual('hello');
+    });
+
+    test('can convert from text to text', async () => {
+      // txt to txt
+      const fragment4 = new Fragment({ ownerId: '1234', type: 'text/plain', size: 0 });
+      await fragment4.save();
+      await fragment4.setData(Buffer.from('hello'));
+
+      const newFragmentData4 = await fragment4.convertFragment('txt');
+      expect(fragment4.type).toBe('text/plain');
+      expect(await newFragmentData4).toEqual('hello');
+    });
+
+    test('can convert from csv to json', async () => {
+      // csv to json
+      const fragment5 = new Fragment({ ownerId: '1234', type: 'text/csv', size: 0 });
+      await fragment5.save();
+      await fragment5.setData('Column 1,Column 2,Column 3,Column 4 1-1,1-2,1-3,1-4 2-1,2-2,2-3,2-4 3-1,3-2,3-3,3-4 4,5,6,7');
+
+      await fragment5.convertFragment('json');
+      expect(fragment5.type).toBe('application/json');
+    });
+
+    test('can convert from image/png to image/webp', async () => {
+      // image to image
+      const imagePath = path.resolve(__dirname, 'Sample-PNG-Image.png');
+      const imageDataBuffer = fs.readFileSync(imagePath);
+      //const image = generateMockImageData();
+
+      const fragment5 = new Fragment({ ownerId: '1234', type: 'image/png', size: imageDataBuffer.length });
+      await fragment5.save();
+      await fragment5.setData(Buffer.from(imageDataBuffer));
+
+      await fragment5.convertFragment('webp');
+      expect(fragment5.type).toBe('image/webp');
+    });
+
+    test('can convert from image/png to image/avif', async () => {
+      // image to image
+      const imagePath = path.resolve(__dirname, 'Sample-PNG-Image.png');
+      const imageDataBuffer = fs.readFileSync(imagePath);
+      //const image = generateMockImageData();
+
+      const fragment5 = new Fragment({ ownerId: '1234', type: 'image/png', size: imageDataBuffer.length });
+      await fragment5.save();
+      await fragment5.setData(Buffer.from(imageDataBuffer));
+
+      await fragment5.convertFragment('avif');
+      expect(fragment5.type).toBe('image/avif');
+    });
+
+    test('can convert from image/png to image/gif', async () => {
+      // image to image
+      const imagePath = path.resolve(__dirname, 'Sample-PNG-Image.png');
+      const imageDataBuffer = fs.readFileSync(imagePath);
+      //const image = generateMockImageData();
+
+      const fragment5 = new Fragment({ ownerId: '1234', type: 'image/png', size: imageDataBuffer.length });
+      await fragment5.save();
+      await fragment5.setData(Buffer.from(imageDataBuffer));
+
+      await fragment5.convertFragment('gif');
+      expect(fragment5.type).toBe('image/gif');
     });
 
     test('convertFragment() throws if the type is not supported', async () => {

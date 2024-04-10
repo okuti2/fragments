@@ -50,13 +50,15 @@ use git status to check the status of file changes
 
 curl.exe -i -u toyosikuti@gmail.com:T0y0s1Kut1@1012 http://localhost:8080/v1/fragments
 
-curl -i -u email:password http://localhost:8080/v1/fragments/{fragment_id}
+curl.exe -i -u email:password http://localhost:8080/v1/fragments/{fragment_id}
 
-curl -i -u email:password http://localhost:8080/v1/fragments/1a30879e-6786-4cd6-89d9-d769282a5777.html
+curl.exe -i -u email:password http://localhost:8080/v1/fragments/1a30879e-6786-4cd6-89d9-d769282a5777.html
 
 curl.exe -i -X POST -u toyosikuti@gmail.com:T0y0s1Kut1@1012 -H "Content-Type: text/markdown" -d "This is a fragment" http://localhost:8080/v1/fragments
 
 curl -i -H "Authorization: Bearer {id_token}" http://localhost:8080/v1/fragments/{fragment_id}
+
+curl.exe -i -X PUT -u toyosikuti@gmail.com:T0y0s1Kut1@1012 -H "Content-Type: text/markdown" -d "This is the updated fragment" http://localhost:8080/v1/fragments/980b32c0-9b8d-4ec7-aaa6-36e4a784a2af
 
 - Running DockerFiles
 

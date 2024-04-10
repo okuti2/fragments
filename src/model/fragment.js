@@ -5,6 +5,8 @@ const { randomUUID } = require('crypto');
 const contentType = require('content-type');
 const logger = require('../logger');
 const MarkdownIt = require('markdown-it');
+const Papa = require('papaparse');
+const sharp = require('sharp');
 
 
 // Functions for working with fragment metadata/data using our DB
@@ -152,9 +154,9 @@ class Fragment {
         break;
       default:
         // I do not need this yet
-        // if(this.mimeType.startsWith('image/')){
-        //   validTypes = ['image/png', 'image/jpeg', 'image/webp','image/avif', 'image/gif'];
-        // }
+        if(this.mimeType.startsWith('image/')){
+          validTypes = ['image/png', 'image/jpeg', 'image/webp','image/avif', 'image/gif'];
+        }
     }
     return validTypes;
   }
@@ -167,7 +169,7 @@ class Fragment {
 
   // Update to proper functionality
   static isSupportedType(value) {
-    const validTypes = ['application/json'];
+    const validTypes = ['application/json', 'image/png', 'image/jpeg', 'image/webp','image/avif', 'image/gif', 'text/plain', 'text/html', 'text/markdown', 'text/csv'];
     const cType = value.split(';')[0];
     return validTypes.includes(cType) || cType.startsWith('text/');
   }
@@ -188,6 +190,8 @@ class Fragment {
         return 'image/png';
       case 'jpg':
         return 'image/jpeg';
+      case 'jpeg':
+        return 'image/jpeg';
       case 'webp':
         return 'image/webp';
       case 'avif':
@@ -201,26 +205,140 @@ class Fragment {
   async convertFragment(extension){
     logger.debug({ extension }, 'Converting fragment');
     const newType = this.convertExtension(extension);
+    logger.debug({ newType }, 'New type');
     const data = await this.getData();
 
     if(!this.formats.includes(newType)){
       throw new Error("Unsupported type");
     }
-    if(this.type === 'text/markdown' && newType === 'text/html'){
-      logger.debug({ newType }, 'Converting markdown to html');
+    if(newType === this.type){
+      return data.toString();
+    }
+    else if(this.type === 'text/markdown'){  // Conversion from Markdown
+      if(newType === 'text/html'){
+        logger.debug({ newType }, 'Converting markdown to html');
+        this.type = newType;
+        
+        const md = MarkdownIt();
+        
+        const convertedData = md.render(data.toString());
+        logger.debug({ convertedData }, 'Converted fragment');
+        this.size = convertedData.length;
+        await this.setData(convertedData);
+        return convertedData;
+      }
+      else if(newType === 'text/plain'){
+        logger.debug({ newType }, 'Converting markdown to plain text');
+        this.type = newType;
+        const convertedData = data.toString();
+        logger.debug({ convertedData }, 'Converted fragment');
+        this.size = convertedData.length;
+        await this.setData(convertedData);
+        return convertedData;
+      }
+    }
+    else if(this.type === 'text/html' && newType === 'text/plain'){ // Conversion from HTML
+      logger.debug({ newType }, 'Converting html to plain text');
       this.type = newType;
-      
-      const md = MarkdownIt();
-      
-      const convertedData = md.render(data.toString());
+      const convertedData = data.toString().replace(/<[^>]*>/g, '');
       logger.debug({ convertedData }, 'Converted fragment');
+      this.size = convertedData.length;
+      await this.setData(convertedData);
+      return convertedData;
+    }
+    else if(this.type === 'text/csv'){ // Conversion from CSV
+      if(newType === 'application/json'){
+        // let result = [];
+        // const lines = data.toString().split("\r" + "\n");
+        // var headers = lines[0].split(",");
+
+        // for(var i = 1; i < lines.length; i++){
+        //   if(!lines[i])
+        //     continue
+        //   var obj = {};
+        //   var currentline = lines[i];
+        //   var re = /"/g;
+        //   currentline = re[Symbol.replace](currentline, '');
+        //   currentline = currentline.split(",");
+
+        //   for(var j = 0; j < headers.length; j++){
+        //     let head = headers[j].trim();
+        //     let value = currentline[j].trim();
+        //     obj[head] = value;
+        //   }
+        //   result.push(obj);
+        // }
+        // this.type = newType;
+        // const convertedData = JSON.stringify(result);
+        // logger.debug({ convertedData }, 'Converted fragment');
+        // this.size = convertedData.length;
+        // await this.setData(convertedData);
+        // return convertedData;
+
+        //OR UTILIZE PAPA.PARSE
+        const parsedData = Papa.parse(data.toString(), { header: true });
+        this.type = newType;
+        const convertedData = JSON.stringify(parsedData.data);
+        logger.debug({ convertedData }, 'Converted fragment');
+        this.size = convertedData.length;
+        await this.setData(convertedData);
+        return convertedData;
+      }
+      else if(newType === 'text/plain'){
+        logger.debug({ newType }, 'Converting csv to plain text');
+        this.type = newType;
+        const convertedData = data.toString().replace(/,/g, '\t');
+        logger.debug({ convertedData }, 'Converted fragment');
+        this.size = convertedData.length;
+        await this.setData(convertedData);
+        return convertedData;
+      }
+    }
+    else if(this.type === 'application/json'){ // Conversion from JSON
+      if(newType === 'text/plain'){
+        logger.debug({ newType }, 'Converting json to plain text');
+        this.type = newType;
+        const convertedData = JSON.stringify(data);
+        logger.debug({ convertedData }, 'Converted fragment');
+        this.size = convertedData.length;
+        await this.setData(convertedData);
+        return convertedData;
+      }
+    }
+    else if(this.type.startsWith('image/')){ // Conversion from IMAGE
+      var convertedData = null;
+      if(newType === 'image/png'){
+        logger.debug({ newType }, 'Converting to png');
+        convertedData = await sharp(data).png({ quality: 80 }).toBuffer();
+        logger.debug({ convertedData }, 'Converted fragment');
+      }
+      else if(newType === 'image/jpeg'){
+        logger.debug({ newType }, 'Converting to jpeg');
+        convertedData = await sharp(data).jpeg({ quality: 80 }).toBuffer();
+        logger.debug({ convertedData }, 'Converted fragment');
+      }
+      else if(newType === 'image/webp'){
+        logger.debug({ newType }, 'Converting to webp');
+        convertedData = await sharp(data).webp({ quality: 80 }).toBuffer();
+        logger.debug({ convertedData }, 'Converted fragment');
+      }
+      else if(newType === 'image/avif'){
+        logger.debug({ newType }, 'Converting to avif');
+        convertedData = await sharp(data).avif({ quality: 80 }).toBuffer();
+        logger.debug({ convertedData }, 'Converted fragment');
+      }
+      else if(newType === 'image/gif'){
+        logger.debug({ newType }, 'Converting to gif');
+        convertedData = await sharp(data).gif({ quality: 80 }).toBuffer();
+        logger.debug({ convertedData }, 'Converted fragment');
+      }
+      this.type = newType;
       this.size = convertedData.length;
       await this.setData(convertedData);
       return convertedData;
     }
     return data;
   }
-
 }
 
 module.exports.Fragment = Fragment;

@@ -2,7 +2,7 @@
 # Authenticated POST to /v1/fragments
 POST http://localhost:8080/v1/fragments
 # We're sending a unsupported fragment
-Content-Type: image/gif
+Content-Type: application/html
 # Include HTTP Basic Auth credentials
 [BasicAuth]
 user1@email.com:password1

@@ -12,11 +12,6 @@ module.exports = async (req, res) => {
     Fragment.Fragment.byUser(req.user, req.query.expand)
     .then((fragments) => {
       res.status(200).json(
-      // {
-      //   status: 'ok',
-      //   fragments,
-      // }
-
       response.createSuccessResponse({fragments})
       );
     })

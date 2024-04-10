@@ -36,7 +36,7 @@ describe('POST /v1/fragments', () => {
   test('non-binary request body should be rejected', async () => {
     const res = await request(app)
       .post('/v1/fragments')
-      .set('Content-Type', 'image/gif')
+      .set('Content-Type', 'image/html')
       .auth('user1@email.com', 'password1')
       .send('font-size: 12px; color: red;')
       .expect(415); 

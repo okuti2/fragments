@@ -248,34 +248,7 @@ class Fragment {
     }
     else if(this.type === 'text/csv'){ // Conversion from CSV
       if(newType === 'application/json'){
-        // let result = [];
-        // const lines = data.toString().split("\r" + "\n");
-        // var headers = lines[0].split(",");
-
-        // for(var i = 1; i < lines.length; i++){
-        //   if(!lines[i])
-        //     continue
-        //   var obj = {};
-        //   var currentline = lines[i];
-        //   var re = /"/g;
-        //   currentline = re[Symbol.replace](currentline, '');
-        //   currentline = currentline.split(",");
-
-        //   for(var j = 0; j < headers.length; j++){
-        //     let head = headers[j].trim();
-        //     let value = currentline[j].trim();
-        //     obj[head] = value;
-        //   }
-        //   result.push(obj);
-        // }
-        // this.type = newType;
-        // const convertedData = JSON.stringify(result);
-        // logger.debug({ convertedData }, 'Converted fragment');
-        // this.size = convertedData.length;
-        // await this.setData(convertedData);
-        // return convertedData;
-
-        //OR UTILIZE PAPA.PARSE
+      
         const parsedData = Papa.parse(data.toString(), { header: true });
         this.type = newType;
         const convertedData = JSON.stringify(parsedData.data);
